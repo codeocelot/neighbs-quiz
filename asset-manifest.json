@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/neighbs-quiz/static/css/main.dfca195d.chunk.css",
+    "main.js": "/neighbs-quiz/static/js/main.490653e9.chunk.js",
+    "main.js.map": "/neighbs-quiz/static/js/main.490653e9.chunk.js.map",
+    "runtime-main.js": "/neighbs-quiz/static/js/runtime-main.0e4163bc.js",
+    "runtime-main.js.map": "/neighbs-quiz/static/js/runtime-main.0e4163bc.js.map",
+    "static/js/2.08b4d0d1.chunk.js": "/neighbs-quiz/static/js/2.08b4d0d1.chunk.js",
+    "static/js/2.08b4d0d1.chunk.js.map": "/neighbs-quiz/static/js/2.08b4d0d1.chunk.js.map",
+    "index.html": "/neighbs-quiz/index.html",
+    "precache-manifest.495d719aaeb74500e84efaf32a928d03.js": "/neighbs-quiz/precache-manifest.495d719aaeb74500e84efaf32a928d03.js",
+    "service-worker.js": "/neighbs-quiz/service-worker.js",
+    "static/css/main.dfca195d.chunk.css.map": "/neighbs-quiz/static/css/main.dfca195d.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0e4163bc.js",
+    "static/js/2.08b4d0d1.chunk.js",
+    "static/css/main.dfca195d.chunk.css",
+    "static/js/main.490653e9.chunk.js"
+  ]
+}
