@@ -1,0 +1,3 @@
+dist/js/**/*.js -diff
+**/__snapshots__/* -diff
+yarn.lock -diff

@@ -5,7 +5,7 @@ import _data from './data.json';
 
 const data = _data;
 
-function Demo(props) {
+function Geolocated(props) {
   const [neighb, setNeighb] = useState();
   const { latitude: lat, longitude: lon } = props.coords || {};
   useEffect(
@@ -24,18 +24,15 @@ function Demo(props) {
     : !props.isGeolocationEnabled
       ? <div>Geolocation is not enabled</div>
       : props.coords
-        ? <div>
-          <h3>Neigbourhood {neighb}</h3>
-          <table>
-          <tbody>
-            <tr><td>latitude</td><td>{props.coords.latitude}</td></tr>
-            <tr><td>longitude</td><td>{props.coords.longitude}</td></tr>
-            {/* <tr><td>altitude</td><td>{props.coords.altitude}</td></tr>
-            <tr><td>heading</td><td>{props.coords.heading}</td></tr>
-            <tr><td>speed</td><td>{props.coords.speed}</td></tr> */}
-          </tbody>
-        </table>
-        </div>
+        ? neighb 
+            ? (
+              <div>
+              <h3>Current Neigbourhood: {neighb}</h3>
+              </div>
+            )
+            : (
+              <div>Could not find current neighbourhood.  Are you in the city?</div>
+            )
         : <div>Getting the location data&hellip; </div>;
 }
 
@@ -44,5 +41,6 @@ export default geolocated({
   positionOptions: {
     enableHighAccuracy: true,
   },
+  watchPosition: true,
   userDecisionTimeout: 5000,
-})(Demo);
+})(Geolocated);

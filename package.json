@@ -5,14 +5,18 @@
   "private": true,
   "dependencies": {
     "@types/d3": "^5.7.2",
-    "@types/jest": "24.0.23",
+    "@types/jest": "^24.0.23",
     "@types/node": "12.12.11",
     "@types/react": "16.9.12",
     "@types/react-dom": "16.9.4",
     "d3": "^5.14.2",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "geolocation-utils": "^1.2.2",
     "gh-pages": "^2.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-geolocated": "^3.0.1",
     "react-scripts": "3.2.0",
     "typescript": "3.7.2"
   },
@@ -20,6 +24,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-scripts eject",
     "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
@@ -38,5 +43,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/enzyme-adapter-react-16": "^1.0.5",
+    "enzyme-to-json": "^3.4.3",
+    "js-beautify": "^1.10.2",
+    "react-test-renderer": "^16.12.0",
+    "ts-jest": "^24.2.0"
   }
 }

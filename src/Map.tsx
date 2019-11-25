@@ -1,40 +1,40 @@
 import * as d3 from 'd3';
 import { Selection } from 'd3';
 import { geoMercator, geoPath } from 'd3-geo';
-import React, { useEffect, createRef, useState, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useEffect, createRef, useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 import data from './geojson.json';
+import shuffle from './shuffle';
 
-let names = data.features.map((d) => d.properties.name);
-
-function shuffle(a: string[]): string[] {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-shuffle(names);
+const DEFAULT_FILL = 'rgb(175, 157, 150)';
+const WRONG_FILL = 'red';
+const CORRECT_FILL = 'green';
 
 export default function Map(): JSX.Element {
   const [missed, setMissed] = useState([]);
   const [neighbToFind, setNeighb] = useState();
+  const [allNeighbs, setAllNeighbs] = useState(shuffle(data.features.map((d) => d.properties.name)));
   const rootRef = useMemo(() => createRef<HTMLDivElement>(), []);
   let svg = useRef<Selection<SVGSVGElement, unknown, null, undefined>>();
 
+
   function startGame() {
-    names = shuffle(data.features.map((d) => d.properties.name));
+    setAllNeighbs(shuffle(data.features.map((d) => d.properties.name)));
     setMissed([]);
-    d3.selectAll('svg path').style("fill", "#FB5B1F").style("stroke", "#ffffff");
+    d3.selectAll('svg path').style("fill", DEFAULT_FILL).style("stroke", "#ffffff");
     nextNeighb();
   }
 
-  function nextNeighb() {
-    setNeighb(names[0]);
-    names = names.slice(1);
-    if (!names.length) {
-      alert('game done')
+  const nextNeighb = useCallback(function nextNeighb() {
+    setNeighb(allNeighbs[0]);
+    setAllNeighbs(allNeighbs.slice(1));
+    if (allNeighbs.length === 0) {
+      alert(`game done. Score ${(1-(missed.length/data.features.length))*100}% correct`);
     }
+  }, [allNeighbs, missed.length])
+
+  function skip() {
+    setNeighb(allNeighbs[0]);
+    setAllNeighbs(allNeighbs.slice(1).concat(neighbToFind));
   }
 
   useEffect(
@@ -42,26 +42,36 @@ export default function Map(): JSX.Element {
       if (!neighbToFind) {
         return;
       }
-      d3.selectAll('path').on('click', function(d: any) {
+
+      function eventHandler(this: any, d: any) {
         if (d.properties.name === neighbToFind) {
           d3.selectAll('svg path').filter((dd: any) => d.properties.name === dd.properties.name)
             .each(function(el){
-              d3.select(this).style('fill', 'green').style('opacity', 1);
+              d3.select(this).style('fill', CORRECT_FILL).style('opacity', 1);
             })
         } else {
           d3.selectAll('svg path').filter((dd: any) => neighbToFind === dd.properties.name)
             .each(function(el: any){
-              d3.select(this).style('fill', 'red').style('opacity', 1);
+              d3.select(this).style('fill', WRONG_FILL).style('opacity', 1);
               d3.select(this).insert('text')
                 .attr('dy', '0.5em')
                 .text(el.properties.name);
             })
           setMissed((misses) => misses.concat(neighbToFind));
         }
+        console.log(this);
+        if (svg.current) {
+          svg.current.selectAll('path').on('mouseover', function() {
+            d3.select(this).style('opacity', 0.5);
+          });
+        }
         nextNeighb();
-      })
+      }
+
+      d3.selectAll('path')
+        .on('click', (d: any) => [...allNeighbs, neighbToFind].includes(d.properties.name) ? eventHandler(d) : null );
     },
-    [neighbToFind]
+    [neighbToFind, nextNeighb, allNeighbs]
   )
 
   useLayoutEffect(
@@ -93,22 +103,30 @@ export default function Map(): JSX.Element {
         .attr("d", path as any)
         .attr('data-id', (d: any) => d.id)
         .attr('data-name', (d: { properties: { name: string; }; }) => d.properties.name)
+        .attr('id', (d: { properties: { name: string; }; }) => d.properties.name)
         .attr('pointer-events', 'all')
-        .style("fill", "#FB5B1F").style("stroke", "#ffffff");
+        .style("fill", DEFAULT_FILL).style("stroke", "#ffffff");
 
       svg.current.selectAll('path').on('mouseover', function() {
         d3.select(this).style('opacity', 0.5);
       });
+      svg.current.selectAll('path').on('touchend', function() {
+        d3.select(this).style('opacity', 1);
+      });
       svg.current.selectAll('path').on('mouseleave', function() {
         d3.select(this).style('opacity', 1);
-      })
+      });
     },
     [rootRef]
   );
+
   return (
     <div style={{width: '900px', padding: '30px', margin: 'auto auto'}}>
-      <button type="button" onClick={startGame}>Start New Game</button>
-      { neighbToFind && <div><p>Can you find and click on {neighbToFind}?</p></div>}
+      <button type="button" onClick={startGame} id="start-game-btn">Start New Game</button>
+      { neighbToFind && <div>
+        <div><p>Can you find and click on {neighbToFind}?</p></div>
+        <div><button type="button" onClick={skip}>Skip and come back later</button></div>
+        </div>}
       <aside style={{float: 'right'}}>
         <h4>Missed Neighbs</h4>
         <pre>{JSON.stringify(missed, null, 2)}</pre>
