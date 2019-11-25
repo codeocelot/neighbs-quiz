@@ -1,21 +1,21 @@
 {
   "files": {
     "main.css": "/neighbs-quiz/static/css/main.dfca195d.chunk.css",
-    "main.js": "/neighbs-quiz/static/js/main.89a90498.chunk.js",
-    "main.js.map": "/neighbs-quiz/static/js/main.89a90498.chunk.js.map",
+    "main.js": "/neighbs-quiz/static/js/main.44d62407.chunk.js",
+    "main.js.map": "/neighbs-quiz/static/js/main.44d62407.chunk.js.map",
     "runtime-main.js": "/neighbs-quiz/static/js/runtime-main.0e4163bc.js",
     "runtime-main.js.map": "/neighbs-quiz/static/js/runtime-main.0e4163bc.js.map",
-    "static/js/2.0dc658e5.chunk.js": "/neighbs-quiz/static/js/2.0dc658e5.chunk.js",
-    "static/js/2.0dc658e5.chunk.js.map": "/neighbs-quiz/static/js/2.0dc658e5.chunk.js.map",
+    "static/js/2.b11feb50.chunk.js": "/neighbs-quiz/static/js/2.b11feb50.chunk.js",
+    "static/js/2.b11feb50.chunk.js.map": "/neighbs-quiz/static/js/2.b11feb50.chunk.js.map",
     "index.html": "/neighbs-quiz/index.html",
-    "precache-manifest.76b94145e11c056466a483e5593553a5.js": "/neighbs-quiz/precache-manifest.76b94145e11c056466a483e5593553a5.js",
+    "precache-manifest.4e0531aa0b5cb5143a7fcf726c597567.js": "/neighbs-quiz/precache-manifest.4e0531aa0b5cb5143a7fcf726c597567.js",
     "service-worker.js": "/neighbs-quiz/service-worker.js",
     "static/css/main.dfca195d.chunk.css.map": "/neighbs-quiz/static/css/main.dfca195d.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.0e4163bc.js",
-    "static/js/2.0dc658e5.chunk.js",
+    "static/js/2.b11feb50.chunk.js",
     "static/css/main.dfca195d.chunk.css",
-    "static/js/main.89a90498.chunk.js"
+    "static/js/main.44d62407.chunk.js"
   ]
 }
