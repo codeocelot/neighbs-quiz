@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { Selection, event } from 'd3';
 import { geoMercator, geoPath } from 'd3-geo';
-import React, { Fragment, useEffect, createRef, useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, createRef, useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 import data from './geojson.json';
 import shuffle from './shuffle';
 
@@ -153,18 +153,19 @@ export default function Map(): JSX.Element {
         return;
       }
 
-      var width = 600, height = 600;
+      const width = window.outerWidth;
+      const height = window.outerHeight - 200;
       svg.current = d3.select(ref).append("svg").attr("width", width).attr("height", height);
 
-      var projection = geoMercator().scale(1).translate([0, 0]).precision(0);
-      var path = geoPath().projection(projection);
-      var bounds = path.bounds(data as any);
+      const projection = geoMercator().scale(1).translate([0, 0]).precision(0);
+      const path = geoPath().projection(projection);
+      const bounds = path.bounds(data as any);
 
-      let xScale = width / Math.abs(bounds[1][0] - bounds[0][0]);
-      let yScale = height / Math.abs(bounds[1][1] - bounds[0][1]);
-      let scale = xScale < yScale ? xScale : yScale;
+      const xScale = width / Math.abs(bounds[1][0] - bounds[0][0]);
+      const yScale = height / Math.abs(bounds[1][1] - bounds[0][1]);
+      const scale = xScale < yScale ? xScale : yScale;
 
-      var transl: [number, number] = [(width - scale * (bounds[1][0] + bounds[0][0])) / 2, (height - scale * (bounds[1][1] + bounds[0][1])) / 2];
+      const transl: [number, number] = [(width - scale * (bounds[1][0] + bounds[0][0])) / 2, (height - scale * (bounds[1][1] + bounds[0][1])) / 2];
       projection.scale(scale).translate(transl);
 
       svg.current.selectAll("path")
@@ -194,35 +195,48 @@ export default function Map(): JSX.Element {
   const GameMode = () => (
     mode === Mode.game 
     ? (
-      <Fragment>
+      <div className="pure-u-1 pure-u-md-1-3">
         <button type="button" onClick={startGame} id="start-game-btn">Start New Game</button>
         { neighbToFind && <div>
           <div><p>Can you find and click on {neighbToFind}?</p></div>
           <div><button type="button" onClick={skip}>Skip and come back later</button></div>
           </div>}
-        <aside style={{float: 'right'}}>
-
-          <h4>Missed Neighbs</h4>
-          <pre>{JSON.stringify(missed, null, 2)}</pre>
-        </aside>
-      </Fragment>
+      </div>
     ) : (
       <div/>
     )
   )
 
-  return (
-    <div style={{width: '900px', padding: '30px', margin: 'auto auto'}}>
-      <div>
-        <label htmlFor="game-mode">Learn Mode</label>
-        <input type="checkbox" name="game-mode" onChange={() => setMode(mode === Mode.game ? Mode.learn : Mode.game)} />
+  const BottomRow = () => mode === Mode.learn
+    ? (
+      <div className="pure-u-1 pure-u-md-1-3">
+        <span>Ready to try again?  <button type="button" onClick={() => { setMode(Mode.game); startGame(); } }>Start Game</button></span>
       </div>
-      <div>
-        <GameMode />
+    )
+    : (
+      <div className="pure-u-1 pure-u-md-1-3">
+        <span>Having trouble? <button type="button" onClick={() => setMode(Mode.learn)}> Quit the quiz and learn the neighbs </button></span>
       </div>
-      <div ref={rootRef}/>
-      <div id="tooltip" ref={tooltipRef} style={{position: 'absolute', 'zIndex': 10, visibility: 'hidden'}}></div>
+    )
 
+  return (
+    <div>
+
+      <div style={{margin: 'auto auto'}} className="pure-g">
+        <div className="pure-u-1 pure-u-md-1-3">
+          <GameMode />
+        </div>
+        <div ref={rootRef} className="pure-u-1"/>
+        { mode === Mode.game && (
+          <aside style={{float: 'right'}} className="pure-u-1 ure-u-md-1-2">
+            <h4>Missed Neighbs</h4>
+            <pre>{JSON.stringify(missed, null, 2)}</pre>
+          </aside>
+        )}
+        <BottomRow />
+      </div>
+      <div id="tooltip" ref={tooltipRef} style={{position: 'absolute', 'zIndex': 10, visibility: 'hidden'}}></div>
     </div>
+
   );
 }
