@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { Selection, event } from 'd3';
 import { geoMercator, geoPath } from 'd3-geo';
 import React, { useEffect, createRef, useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import data from './geojson.json';
 import shuffle from './shuffle';
 
@@ -9,17 +10,12 @@ const DEFAULT_FILL = 'rgb(175, 157, 150)';
 const WRONG_FILL = 'red';
 const CORRECT_FILL = 'green';
 
-enum Mode {
-  game,
-  learn,
-}
 
 export default function Map(): JSX.Element {
   const [missed, setMissed] = useState<string[]>([]);
   const [neighbToFind, setNeighb] = useState();
   const [allNeighbs, setAllNeighbs] = useState(shuffle(data.features.map((d) => d.properties.name)));
   const [selected, setSelected] = useState();
-  const [mode, setMode] = useState<Mode>(Mode.game);
   const rootRef = useMemo(() => createRef<HTMLDivElement>(), []);
   let svg = useRef<Selection<SVGSVGElement, unknown, null, undefined>>();
 
@@ -71,16 +67,11 @@ export default function Map(): JSX.Element {
 
   useEffect(
     () => {
-      if (mode === Mode.game) {
-        d3.selectAll('svg path')
-          .each(function(this: any) { removeMouseover(d3.select(this))});
-        resetBoard();
-      } else {
-        d3.selectAll('svg path')
-          .each(function(this: any, d: any) { applyMouseover(d3.select(this), d.properties.name)})
-      }
+      d3.selectAll('svg path')
+        .each(function(this: any) { removeMouseover(d3.select(this))});
+      resetBoard();
     },
-    [applyMouseover, mode, removeMouseover]
+    [applyMouseover, removeMouseover]
   );
 
   useEffect(
@@ -193,31 +184,21 @@ export default function Map(): JSX.Element {
   );
 
   const GameMode = () => (
-    mode === Mode.game 
-    ? (
-      <div className="pure-u-1 pure-u-md-1-3">
-        <button type="button" onClick={startGame} id="start-game-btn">Start New Game</button>
-        { neighbToFind && <div>
-          <div><p>Can you find and click on {neighbToFind}?</p></div>
-          <div><button type="button" onClick={skip}>Skip and come back later</button></div>
-          </div>}
-      </div>
-    ) : (
-      <div/>
-    )
+    <div className="pure-u-1 pure-u-md-1-3">
+      <button type="button" onClick={startGame} id="start-game-btn">Start New Game</button>
+      { neighbToFind && <div>
+        <div><p>Can you find and click on {neighbToFind}?</p></div>
+        <div><button type="button" onClick={skip}>Skip and come back later</button></div>
+        </div>}
+        {selected && <span>Tap again to confirm</span>}
+    </div>
   )
 
-  const BottomRow = () => mode === Mode.learn
-    ? (
-      <div className="pure-u-1 pure-u-md-1-3">
-        <span>Ready to try again?  <button type="button" onClick={() => { setMode(Mode.game); startGame(); } }>Start Game</button></span>
-      </div>
-    )
-    : (
-      <div className="pure-u-1 pure-u-md-1-3">
-        <span>Having trouble? <button type="button" onClick={() => setMode(Mode.learn)}> Quit the quiz and learn the neighbs </button></span>
-      </div>
-    )
+  const BottomRow = () => (
+    <div className="pure-u-1 pure-u-md-1-3">
+      <span>Having trouble? <Link to={'/location'}>Quit the quiz and learn the neighbs</Link></span>
+    </div>
+  )
 
   return (
     <div>
@@ -227,16 +208,13 @@ export default function Map(): JSX.Element {
           <GameMode />
         </div>
         <div ref={rootRef} className="pure-u-1"/>
-        { mode === Mode.game && (
-          <aside style={{float: 'right'}} className="pure-u-1 ure-u-md-1-2">
+        <aside style={{float: 'right'}} className="pure-u-1 ure-u-md-1-2">
             <h4>Missed Neighbs</h4>
             <pre>{JSON.stringify(missed, null, 2)}</pre>
-          </aside>
-        )}
+        </aside>
         <BottomRow />
       </div>
       <div id="tooltip" ref={tooltipRef} style={{position: 'absolute', 'zIndex': 10, visibility: 'hidden'}}></div>
     </div>
-
   );
 }

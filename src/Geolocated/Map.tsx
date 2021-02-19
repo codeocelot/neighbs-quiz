@@ -1,8 +1,9 @@
 import * as d3 from 'd3';
-import { Selection, event } from 'd3';
+import { Selection } from 'd3';
 import { geoMercator, geoPath } from 'd3-geo';
-import React, { createRef, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { createRef, useLayoutEffect, useRef, useMemo, useState } from 'react';
 import data from '../geojson.json';
+import polygonsIntersect from 'polygons-intersect';
 
 const DEFAULT_FILL = 'rgb(175, 157, 150)';
 
@@ -10,21 +11,24 @@ interface IProps {
   location: {
     lat?: number, 
     lon?: number,
-  }
+    accuracy?: number,
+  },
+  neighb?: string
 }
 
 export default function Map(props: IProps): JSX.Element {
   const rootRef = useMemo(() => createRef<HTMLDivElement>(), []);
   let svg = useRef<Selection<SVGSVGElement, unknown, null, undefined>>();
 
-  const tooltipRef = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const tooltipRef = useRef() as React.MutableRefObject<Selection<SVGTextElement, any, null, undefined>>;
+  const [intersectingNeighbs, setIntersectingNeighbs] = useState<string[]>([]);
 
-  const { location: { lat, lon }} = props;
+  const { location: { lat, lon, accuracy }, neighb } = props;
 
   const projection = useMemo(
     () => geoMercator().scale(1).translate([0, 0]).precision(0),
     []
-  )
+  );
 
   useLayoutEffect(
     () => {
@@ -34,7 +38,8 @@ export default function Map(props: IProps): JSX.Element {
         return;
       }
 
-      const width = window.outerWidth, height = window.outerHeight * 0.8;
+      const width = window.outerWidth;
+      const height = window.outerHeight * 0.85 - 100;
       svg.current = d3.select(ref).append("svg").attr("width", width).attr("height", height);
 
       const path = geoPath().projection(projection);
@@ -51,6 +56,7 @@ export default function Map(props: IProps): JSX.Element {
         .data(data.features)
         .enter()
         .append("path")
+        .attr('class', 'neighb')
         .attr("d", path as any)
         .attr('data-id', (d: any) => d.id)
         .attr('data-name', (d: { properties: { name: string; }; }) => d.properties.name)
@@ -58,16 +64,22 @@ export default function Map(props: IProps): JSX.Element {
         .attr('pointer-events', 'all')
         .style("fill", DEFAULT_FILL).style("stroke", "#ffffff")
         .on("mousemove", function(d: any){
-          if (tooltipRef.current) {
-            tooltipRef.current.style.top = (event.pageY-10)+"px";
-            tooltipRef.current.style.left = (event.pageX+10)+"px";
-            tooltipRef.current.style.visibility = 'visible';
-            tooltipRef.current.innerHTML = d.properties.name;
+          if (!tooltipRef.current && svg.current) {
+            tooltipRef.current = svg.current.append('text')
+          }
+          const [clat, clon] = path.centroid(d)
+          if (svg.current) {
+            svg.current.select('text')
+              .attr('y', clon)
+              .attr('x', clat)
+              .text(d.properties.name)
+              .attr('text-anchor', 'middle')
+              .attr('pointer-events', 'none')
           }
         })
         .on("mouseout", function(){
-          if (tooltipRef.current) {
-            tooltipRef.current.style.visibility = 'hidden';
+          if (tooltipRef.current && svg.current) {
+            svg.current.select('text').text('')
           }
         });
 
@@ -86,28 +98,51 @@ export default function Map(props: IProps): JSX.Element {
   );
 
   useLayoutEffect(() => {
-    if (svg.current && lat && lon) {
-      svg.current.selectAll('circle')
-        .data([[lon, lat]])
+    if (svg.current && lat && lon && accuracy) {
+      const circumference = 6371000 * Math.PI * 2;
+
+      const angle = accuracy / circumference * 360;
+
+      const circle = d3.geoCircle().center([lon, lat]).radius(angle);
+      const path = geoPath().projection(projection);
+
+      const circleCoords = circle().coordinates[0].map(([y, x]) => ({ x, y }))
+      const intersecting = data.features.filter((feature) => {
+        const coords = feature.geometry.coordinates[0][0].map(([y, x]: number[]) => ({ y, x }))
+        const out = polygonsIntersect(coords, circleCoords)
+
+        return out.length;
+      })
+
+      if (intersecting.length) {
+        setIntersectingNeighbs(intersecting
+          .map((feature) => feature.properties.name)
+          .filter((intersectingNeighb) => intersectingNeighb !== neighb));
+      }
+
+      svg.current.selectAll('path.location')
+        .data([lon, lat])
         .join(
           (enter) => enter
-            .append('circle')
-            .attr('cx', (d: any) => (projection(d) as number[])[0])
-            .attr('cy', (d: any) => (projection(d) as number[])[1])
-            .attr("r", "8px")
-            .attr("fill", "red"),
+            .append("path")
+            .attr('class', 'location')
+            .attr("d", path(circle()) || 2)
+            .attr("fill","red"),
           (update) => update
-            .attr('cx', (d: any) => (projection(d) as number[])[0])
-            .attr('cy', (d: any) => (projection(d) as number[])[1])
-        )
+            .attr('d', path(circle()) || 2)
+        );
     }
 
-  },[lat, lon, projection])
+  }, [accuracy, lat, lon, neighb, projection])
 
   return (
     <div style={{margin: 'auto auto'}}>
+      {!!intersectingNeighbs.length && <span>Given GPS accuracy, you may also be within {
+      intersectingNeighbs.length > 1
+        ? intersectingNeighbs.slice(0, -1).join(', ') + ' or ' + intersectingNeighbs.slice(-1)
+        : intersectingNeighbs[0]
+      }</span>}
       <div ref={rootRef}/>
-      <div id="tooltip" ref={tooltipRef} style={{position: 'absolute', 'zIndex': 10, visibility: 'hidden'}}></div>
     </div>
   );
 }

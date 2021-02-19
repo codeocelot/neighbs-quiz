@@ -16,8 +16,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="App">
-        <div>
-          
+        <div className="wrapper">
           <Switch>
             <Route path="/location">
               <Geolocated />

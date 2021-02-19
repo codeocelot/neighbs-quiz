@@ -1,5 +1,5 @@
 # neigbs-quiz
-How many SF neighbourhoods can you locate?
+How many SF neighborhoods can you locate?
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
