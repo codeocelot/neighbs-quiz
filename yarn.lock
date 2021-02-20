@@ -1540,6 +1540,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.11.tgz#bec2961975888d964196bf0016a2f984d793d3ce"
   integrity sha512-O+x6uIpa6oMNTkPuHDa9MhMMehlxLAd5QcOvKRjAFsBVpeFWTOPnXbDvILvFgFFZfQ1xh1EZi1FbXxUix+zpsQ==
 
+"@types/polygons-intersect@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/polygons-intersect/-/polygons-intersect-1.0.0.tgz#fc77b9c4cba59ef804449e378b688a4fdac9a478"
+  integrity sha512-i8ipC+/iFD+eYXFErym+rsyiK/t0tCMH7lnBgFsNTCwqbs+IPdeoOOloKdviWwVzeDennxJpqOgItAvNfiXDkg==
+
 "@types/prop-types@*":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
@@ -1832,9 +1837,9 @@ acorn-walk@^6.0.1:
   integrity sha512-7evsyfH1cLOCdAzZAd43Cic04yKydNx0cF+7tiA19p1XnLLPU4dpCQOqpjqwokFe//vS0QqfqqjCS2JkiIs0cA==
 
 acorn@^5.5.3:
-  version "5.7.3"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.3.tgz#67aa231bf8812974b85235a96771eb6bd07ea279"
-  integrity sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw==
+  version "5.7.4"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.4.tgz#3e8d8a9947d0599a1796d10225d7432f4a4acf5e"
+  integrity sha512-1D++VG7BhrtvQpNbBzovKNc1FLGGEE/oGe7b9xJm/RFHMBeUaUGpluV9RLjZa47YFdPcDAenEYuq9pQPcMdLJg==
 
 acorn@^6.0.1, acorn@^6.0.4, acorn@^6.2.1:
   version "6.3.0"
@@ -8285,6 +8290,11 @@ point-in-polygon@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/point-in-polygon/-/point-in-polygon-1.0.1.tgz#d59b64e8fee41c49458aac82b56718c5957b2af7"
   integrity sha1-1Ztk6P7kHElFiqyCtWcYxZV7Kvc=
+
+polygons-intersect@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/polygons-intersect/-/polygons-intersect-1.0.3.tgz#34c691d2d27aabcc369479e0f810797816802f3c"
+  integrity sha1-NMaR0tJ6q8w2lHng+BB5eBaALzw=
 
 portfinder@^1.0.9:
   version "1.0.24"
