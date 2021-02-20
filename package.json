@@ -15,7 +15,7 @@
     "enzyme-adapter-react-16": "^1.15.1",
     "geolocation-utils": "^1.2.2",
     "gh-pages": "^2.1.1",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "polygons-intersect": "^1.0.3",
     "purecss": "^1.0.1",
     "react": "^16.12.0",
