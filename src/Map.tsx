@@ -25,6 +25,7 @@ export default function Map(): JSX.Element {
     setAllNeighbs(shuffle(data.features.map((d) => d.properties.name)));
     setMissed([]);
     d3.selectAll('svg path').style("fill", DEFAULT_FILL).style("stroke", "#ffffff");
+    removeTooltips()
   }
 
   function startGame() {
@@ -39,6 +40,12 @@ export default function Map(): JSX.Element {
       alert(`game done. Score ${(1-(missed.length/data.features.length))*100}% correct`);
     }
   }, [allNeighbs, missed.length])
+
+  useEffect(() => {
+    if (allNeighbs.length === 0 && neighbToFind === undefined) {
+      resetBoard()
+    }
+  }, [allNeighbs, nextNeighb])
 
   function skip() {
     setNeighb(allNeighbs[0]);
@@ -65,14 +72,10 @@ export default function Map(): JSX.Element {
     return el.on("mousemove", null).on("mouseout", null);
   },[])
 
-  useEffect(
-    () => {
+  const removeTooltips = () => {
       d3.selectAll('svg path')
         .each(function(this: any) { removeMouseover(d3.select(this))});
-      resetBoard();
-    },
-    [applyMouseover, removeMouseover]
-  );
+    }
 
   useEffect(
     () => {
