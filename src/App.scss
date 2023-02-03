@@ -50,3 +50,9 @@ body {
   text-align: left;
   padding: 1em 7em;
 }
+
+@media only screen and (max-width: 600px)  {
+  .credits {
+    padding: 1em 3em;
+  }
+}

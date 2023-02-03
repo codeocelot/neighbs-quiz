@@ -4,6 +4,7 @@ import './App.scss';
 import 'purecss';
 import Map from './Map';
 import Geolocated from './Geolocated/Geolocated';
+import MapContainer from './MapContainer';
 
 if (process.env.NODE_ENV === 'production') {
   if(window.location.href.substr(0,5) !== 'https'){
@@ -22,7 +23,9 @@ const App: React.FC = () => {
               <Geolocated />
             </Route>
             <Route path="/quiz">
-              <Map />
+              <MapContainer >
+                {(props: any) => <Map {...props} />}
+              </MapContainer>
             </Route>
             <Route>
               <Redirect to="/location" />
